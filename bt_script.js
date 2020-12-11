@@ -44,6 +44,3 @@ const fetchInfo = () => {
 };
 
 fetchInfo();
-
-
-// compare the 'public_repos' count against the repositories array returned from following the 'repos_url', verifying that the counts match
