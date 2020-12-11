@@ -25,7 +25,7 @@ const fetchInfo = () => {
                     }
                     axios.get(value)
                     .then(newResponse => {
-                        console.log(`valid response:`, newResponse.data)
+                        console.log(`valid response, response from ${value} is:`, newResponse.data)
                         //verify that the initial repo count matches the response count, logs an error if not
                         if (value.includes('/repos')){
                             if (newResponse.data.length == defaultResponse.public_repos) {
@@ -45,8 +45,4 @@ const fetchInfo = () => {
 
 fetchInfo();
 
-
-
-
-// '/repos?page=1&per_page=100'
 
