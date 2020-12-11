@@ -1,71 +1,52 @@
 //function to retrieve info from the github boomtown endpoints
 const fetchInfo = () => {
     const baseURL='https://api.github.com/orgs/boomtownroi'
-    // default get request for the base endpoint and the repos endpoint
-    axios.all([axios.get(baseURL),
-               axios.get(baseURL + '/repos')])
-        .then(axios.spread((defaultResponse, reposResponse) => {
-            const boomTownInfo = defaultResponse.data
-            const reposInfo = reposResponse.data
-            const publicReposCount = defaultResponse.data.public_repos
-            const reposResponseCount = reposResponse.data.length  
-            console.log('BoomTown default route info:', boomTownInfo);
-            console.log('BoomTown repos info:', reposInfo)
+    // default get request for the base endpoint
+    axios.get(baseURL)
+        .then(response => {
+            const defaultResponse = response.data
             //verify that the updated value is later than the created date value
-            if (boomTownInfo.created_at < boomTownInfo.updated_at){
+            if (defaultResponse.created_at < defaultResponse.updated_at){
                 console.log('The updated date is later than the created at date')
             }
             else {
                 console.log('Error, the created date is later than the updated date')
             }
-            //verify that the initial repo count matches the response count, logs an error if not
-            if (publicReposCount == reposResponseCount) {
-                console.log(`The two counts match, equaling ${publicReposCount}`)
-            }
-            else {
-                console.log(`Error, the counts do not match. The public_repos count is ${publicReposCount} and the repos response count is ${reposResponseCount}.`)
-            }
-        }))
+            Object.values(defaultResponse).forEach(value => {
+                //change value to string in order to check if it includes the URL
+                if (value != null){
+                value = value.toString();
+                }
+                // if value includes correct url, make a get request and log the json response to the console or catch and log error message
+                if (value.includes('https://api.github.com/orgs/BoomTownROI')){
+                    // find the repos url, add in page and per page query to get the total amount to match at 41
+                    if (value.includes('/repos')){
+                        value = value + '?page=1&per_page=100'
+                    }
+                    axios.get(value)
+                    .then(newResponse => {
+                        console.log(`valid response:`, newResponse.data)
+                        //verify that the initial repo count matches the response count, logs an error if not
+                        if (value.includes('/repos')){
+                            if (newResponse.data.length == defaultResponse.public_repos) {
+                                console.log(`The two counts match, equaling ${defaultResponse.public_repos}`)
+                            }
+                            else {
+                                console.log(`Error, the counts do not match. The public_repos count is ${defaultResponse.public_repos} and the repos response count is ${newResponse.data.length}.`)
+                            }
+                        }
+                    })
+                    .catch(error => console.log(error));
+                }                   
+            })            
+    })   
         .catch(error => console.log(error));   
-    // request for the events endpoint
-    axios.get(baseURL + '/events')
-        .then(eventsResponse => {
-            const eventsInfo = eventsResponse.data
-            console.log('BoomTown events info:', eventsInfo);
-        })
-        .catch(error => console.error(error))
-    //request for the hooks endpoint
-    axios.get(baseURL + '/hooks')
-        .then(hooksResponse => {
-            const hooksInfo = hooksResponse.data
-            console.log('BoomTown hooks info:', hooksInfo);
-        })
-        .catch(error => console.error(error))
-    // request for the issues endpoint
-    axios.get(baseURL + '/issues')
-        .then(issuesResponse => {
-            const issuesInfo = issuesResponse.data
-            console.log('BoomTown issues info:', issuesInfo);
-        })
-        .catch(error => console.error(error))
-    //request for the members endpoint
-    axios.get(baseURL + '/members')
-        .then(membersResponse => {
-            const membersInfo = membersResponse.data
-            console.log('BoomTown members info:', membersInfo);
-        })
-        .catch(error => console.error(error))
-    //request for the public members endpoint
-    axios.get(baseURL + '/public_members')
-        .then(publicMembersResponse => {
-            const publicMembersInfo = publicMembersResponse.data
-            console.log('BoomTown public members info:', publicMembersInfo);
-        })
-        .catch(error => console.error(error))
 };
 
 fetchInfo();
 
 
 
+
+// '/repos?page=1&per_page=100'
 
