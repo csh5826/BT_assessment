@@ -14,7 +14,7 @@ const fetchInfo = () => {
             }
             Object.values(defaultResponse).forEach(value => {
                 //change value to string in order to check if it includes the URL
-                if (value != null){
+                if (value !== null){
                 value = value.toString();
                 }
                 // if value includes correct url, make a get request and log the json response to the console or catch and log error message
@@ -28,8 +28,8 @@ const fetchInfo = () => {
                         console.log(`valid response, response from ${value} is:`, newResponse.data)
                         //verify that the initial repo count matches the response count, logs an error if not
                         if (value.includes('/repos')){
-                            if (newResponse.data.length == defaultResponse.public_repos) {
-                                console.log(`The two counts match, equaling ${defaultResponse.public_repos}`)
+                            if (newResponse.data.length === defaultResponse.public_repos) {
+                                console.log(`The public_repos count matches the total number of repositories pulled from the repos_url, equaling:  ${defaultResponse.public_repos}`)
                             }
                             else {
                                 console.log(`Error, the counts do not match. The public_repos count is ${defaultResponse.public_repos} and the repos response count is ${newResponse.data.length}.`)
@@ -46,3 +46,4 @@ const fetchInfo = () => {
 fetchInfo();
 
 
+// compare the 'public_repos' count against the repositories array returned from following the 'repos_url', verifying that the counts match
